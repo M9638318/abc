@@ -1,0 +1,57 @@
+[
+  {
+    "category": "常用工具",
+    "links": [
+      {
+        "title": "Google 翻译",
+        "url": "https://translate.google.com/",
+        "description": "多语言互译"
+      },
+      {
+        "title": "TinyPNG",
+        "url": "https://tinypng.com/",
+        "description": "在线图片压缩工具"
+      },
+      {
+        "title": "Canva",
+        "url": "https://www.canva.com/",
+        "description": "在线设计工具"
+      }
+    ]
+  },
+  {
+    "category": "开发学习",
+    "links": [
+      {
+        "title": "GitHub",
+        "url": "https://github.com/",
+        "description": "代码托管平台"
+      },
+      {
+        "title": "Stack Overflow",
+        "url": "https://stackoverflow.com/",
+        "description": "开发者问答社区"
+      },
+      {
+        "title": "MDN Web Docs",
+        "url": "https://developer.mozilla.org/",
+        "description": "Web 技术权威文档"
+      }
+    ]
+  },
+  {
+    "category": "设计灵感",
+    "links": [
+      {
+        "title": "Dribbble",
+        "url": "https://dribbble.com/",
+        "description": "设计师作品分享"
+      },
+      {
+        "title": "Pinterest",
+        "url": "https://www.pinterest.com/",
+        "description": "图片灵感瀑布流"
+      }
+    ]
+  }
+]

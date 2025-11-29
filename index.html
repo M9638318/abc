@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的网站收藏</title>
+    <style>
+        /* 基础样式 */
+        :root {
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --title-color: #007bff;
+            --desc-color: #555;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* 容器 */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: #222;
+        }
+
+        /* 搜索框 */
+        #search-box {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-sizing: border-box; /* 保证 padding 不会撑大宽度 */
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        /* 链接容器 */
+        .category-section {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* 链接卡片 */
+        .link-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: block; /* 使整个卡片可点击 */
+        }
+
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .link-card .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--title-color);
+            margin: 0 0 8px 0;
+        }
+
+        .link-card .description {
+            font-size: 14px;
+            color: var(--desc-color);
+            margin: 0;
+        }
+
+        /* 搜索无结果提示 */
+        #no-results {
+            text-align: center;
+            font-size: 18px;
+            color: #888;
+            padding: 30px;
+            display: none; /* 默认隐藏 */
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .links-grid {
+                grid-template-columns: 1fr; /* 手机上单列显示 */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>我的网站收藏</h1>
+            <p>一个简洁、快速的个人导航页</p>
+        </header>
+
+        <input type="search" id="search-box" placeholder="搜索标题或描述...">
+
+        <div id="links-container">
+            </div>
+
+        <div id="no-results">
+            <p>😔 找不到匹配的链接</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const linksContainer = document.getElementById('links-container');
+            const searchBox = document.getElementById('search-box');
+            const noResults = document.getElementById('no-results');
+            let allLinksData = []; // 用来存储所有分类和链接数据
+
+            // 1. 获取并渲染数据
+            fetch('links.json')
+                .then(response => response.json())
+                .then(data => {
+                    allLinksData = data; // 保存数据
+                    renderLinks(allLinksData); // 初始渲染
+                })
+                .catch(error => {
+                    console.error('获取 links.json 失败:', error);
+                    linksContainer.innerHTML = '<p style="color: red; text-align: center;">加载链接失败，请检查 links.json 文件。</p>';
+                });
+
+            // 2. 渲染链接的函数
+            function renderLinks(categories) {
+                linksContainer.innerHTML = ''; // 清空现有内容
+                let hasVisibleItems = false;
+
+                if (!categories || categories.length === 0) {
+                    noResults.style.display = 'block';
+                    return;
+                }
+
+                categories.forEach(category => {
+                    // 如果一个分类下的所有链接都被过滤掉了，就不显示这个分类
+                    if (category.links.length > 0) {
+                        hasVisibleItems = true;
+                        // 创建分类区块
+                        const section = document.createElement('section');
+                        section.className = 'category-section';
+
+                        // 创建分类标题
+                        const title = document.createElement('h2');
+                        title.className = 'category-title';
+                        title.textContent = category.category;
+                        section.appendChild(title);
+
+                        // 创建链接网格
+                        const grid = document.createElement('div');
+                        grid.className = 'links-grid';
+
+                        category.links.forEach(link => {
+                            // 创建链接卡片
+                            const card = document.createElement('a');
+                            card.className = 'link-card';
+                            card.href = link.url;
+                            card.target = '_blank'; // 在新标签页打开
+                            card.rel = 'noopener noreferrer';
+
+                            card.innerHTML = `
+                                <h3 class="title">${link.title}</h3>
+                                <p class="description">${link.description}</p>
+                            `;
+                            grid.appendChild(card);
+                        });
+
+                        section.appendChild(grid);
+                        linksContainer.appendChild(section);
+                    }
+                });
+
+                // 控制“无结果”提示的显示
+                noResults.style.display = hasVisibleItems ? 'none' : 'block';
+            }
+
+            // 3. 搜索功能
+            searchBox.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase().trim();
+
+                // 如果没有搜索词，显示所有数据
+                if (!searchTerm) {
+                    renderLinks(allLinksData);
+                    return;
+                }
+
+                // 深度拷贝一份数据来进行过滤，防止修改原始数据
+                const filteredData = JSON.parse(JSON.stringify(allLinksData));
+
+                const filteredCategories = filteredData.filter(category => {
+                    // 过滤掉不匹配的链接
+                    category.links = category.links.filter(link => 
+                        link.title.toLowerCase().includes(searchTerm) ||
+                        link.description.toLowerCase().includes(searchTerm)
+                    );
+                    // 返回那些过滤后仍然包含链接的分类
+                    return category.links.length > 0;
+                });
+
+                renderLinks(filteredCategories);
+            });
+        });
+    </script>
+</body>
+</html>
