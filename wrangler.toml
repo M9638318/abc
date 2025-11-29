@@ -4,3 +4,5 @@ compatibility_date = "2025-11-29" # 请保持这个日期与日志中的日期�
 # 告诉 Wrangler 这是 Pages 项目，静态资产在根目录
 [site]
 bucket = "."
+# wrangler.toml
+name = 'abcs'
